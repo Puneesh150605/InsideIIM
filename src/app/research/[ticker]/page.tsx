@@ -10,6 +10,8 @@ import { BullBearArena } from '../../../components/bull-bear-arena';
 import { PeerMatrix } from '../../../components/peer-matrix';
 import { SwotGrid } from '../../../components/swot-grid';
 import { GrillAnalystChat } from '../../../components/grill-analyst-chat';
+import { AiCommitteeRoom } from '../../../components/ai-committee-room';
+import { StressTestSimulator } from '../../../components/stress-test-simulator';
 import { ResearchReport, AgentLog, InvestmentHorizon } from '../../../lib/types';
 import { getFallbackOrGenerateReport } from '../../../lib/data/mock-institutional-data';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -252,6 +254,12 @@ export default function ResearchDashboardPage() {
             >
               {/* Verdict Hero Banner */}
               <VerdictBanner report={report} onOpenChat={() => setIsChatOpen(true)} />
+
+              {/* LangGraph AI Committee Intelligence Room & Specialist Voting Ledger */}
+              <AiCommitteeRoom report={report} />
+
+              {/* Interactive Macro Scenario & Stress Simulator */}
+              <StressTestSimulator report={report} />
 
               {/* Financial Models & Charts Suite */}
               <FinancialCharts report={report} />

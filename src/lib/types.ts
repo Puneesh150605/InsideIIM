@@ -101,6 +101,13 @@ export interface ResearchReport {
   sentimentScore: number; // -100 to +100
   generatedAt: string;
   isLiveLLM?: boolean;
+  committeeIntelligence?: {
+    marketDataSummary?: string;
+    moatAnalysis?: string;
+    macroAnalysis?: string;
+    valuationThesis?: string;
+    votes?: { agent: string; vote: 'INVEST' | 'PASS' | 'WATCH'; confidence: number; rationale: string }[];
+  };
 }
 
 export interface ChatMessage {

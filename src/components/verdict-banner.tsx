@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { TrendingUp, TrendingDown, ShieldAlert, Award, ArrowUpRight, Download, MessageSquare, CheckCircle2, AlertCircle, Sparkles } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { TrendingUp, TrendingDown, ShieldAlert, Award, ArrowUpRight, Download, MessageSquare, CheckCircle2, AlertCircle, Sparkles, Volume2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { ResearchReport } from '../lib/types';
@@ -12,6 +12,7 @@ interface VerdictBannerProps {
 }
 
 export function VerdictBanner({ report, onOpenChat }: VerdictBannerProps) {
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const isInvest = report.decision === 'INVEST';
   const isPass = report.decision === 'PASS';
   const isWatch = report.decision === 'WATCH';
@@ -89,6 +90,27 @@ ${report.keyRisks.map((r, idx) => `- ${r}`).join('\n')}
     URL.revokeObjectURL(url);
   };
 
+  const toggleAudioBriefing = () => {
+    if (!('speechSynthesis' in window)) {
+      alert('Text-to-speech is not supported in this browser.');
+      return;
+    }
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+    } else {
+      window.speechSynthesis.cancel();
+      const text = `ApexIQ Institutional Briefing for ${report.companyName}, symbol ${report.ticker}. Our committee verdict is ${report.decision} with an alpha conviction score of ${report.convictionScore} percent. Current price is ${report.metrics.currency}${report.metrics.currentPrice}, with a quantitative target of ${report.metrics.currency}${report.metrics.targetPrice}, representing ${upside >= 0 ? 'an upside' : 'a downside'} of ${upside.toFixed(1)} percent. Summary: ${report.summary}`;
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+      window.speechSynthesis.speak(utterance);
+      setIsSpeaking(true);
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -138,25 +160,28 @@ ${report.keyRisks.map((r, idx) => `- ${r}`).join('\n')}
             <p className="mt-2 text-sm sm:text-base text-slate-300 leading-relaxed font-normal">
               {report.summary}
             </p>
-          </div>
-
-          {/* Core Thesis Bullets */}
-          <div className="pt-2 space-y-2">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Institutional Thesis Drivers:</h4>
-            <div className="grid grid-cols-1 gap-2">
-              {report.thesis.map((point, idx) => (
-                <div key={idx} className="flex items-start space-x-2.5 text-xs sm:text-sm text-slate-200 bg-white/[0.03] p-2.5 rounded-xl border border-white/5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span>{point}</span>
-                </div>
-              ))}
+            
+            {/* Core Thesis Bullets */}
+            <div className="mt-4 pt-4 border-t border-white/10 space-y-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-indigo-400 flex items-center">
+                <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" />
+                Key Investment Drivers:
+              </span>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {report.thesis.map((point, i) => (
+                  <li key={i} className="text-xs sm:text-sm text-slate-200 flex items-start space-x-2 bg-white/5 p-2 rounded-lg border border-white/5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 mt-1.5 flex-shrink-0"></span>
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
 
-        {/* Right: Decision Badge & Valuation Box */}
-        <div className="w-full lg:w-auto flex flex-col sm:flex-row lg:flex-col items-stretch sm:items-center lg:items-end gap-4 shrink-0">
-          {/* Main Verdict Badge */}
+        {/* Right: Metrics & Verdict Box */}
+        <div className="flex flex-col sm:flex-row lg:flex-col items-center justify-end gap-4 w-full lg:w-auto">
+          {/* Verdict Box */}
           <div
             className={`flex flex-col items-center justify-center p-6 rounded-2xl border text-center shadow-2xl w-full sm:w-64 ${
               isInvest
@@ -201,15 +226,26 @@ ${report.keyRisks.map((r, idx) => `- ${r}`).join('\n')}
           {/* Action Buttons */}
           <div className="flex items-center justify-end space-x-2 w-full sm:w-64 pt-1">
             <button
+              onClick={toggleAudioBriefing}
+              className={`flex-1 flex items-center justify-center space-x-1 py-2.5 px-2 rounded-xl border font-bold text-xs transition-all ${
+                isSpeaking
+                  ? 'bg-purple-500/40 border-purple-400 text-white animate-pulse glow-purple'
+                  : 'bg-purple-500/20 hover:bg-purple-500/30 border-purple-500/40 text-purple-300'
+              }`}
+            >
+              <Volume2 className="w-4 h-4" />
+              <span>{isSpeaking ? 'Stop' : 'Listen'}</span>
+            </button>
+            <button
               onClick={onOpenChat}
-              className="flex-1 flex items-center justify-center space-x-1.5 py-2.5 px-3 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/40 text-indigo-300 font-bold text-xs transition-all"
+              className="flex-1 flex items-center justify-center space-x-1 py-2.5 px-2 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/40 text-indigo-300 font-bold text-xs transition-all"
             >
               <MessageSquare className="w-4 h-4" />
               <span>Grill AI</span>
             </button>
             <button
               onClick={exportMemo}
-              className="flex-1 flex items-center justify-center space-x-1.5 py-2.5 px-3 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-white font-bold text-xs transition-all shadow-sm"
+              className="flex-1 flex items-center justify-center space-x-1 py-2.5 px-2 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-white font-bold text-xs transition-all shadow-sm"
             >
               <Download className="w-4 h-4" />
               <span>Memo MD</span>

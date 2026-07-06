@@ -1,7 +1,7 @@
 import { ResearchState } from './state';
 import { getFallbackOrGenerateReport } from '../data/mock-institutional-data';
 import { fetchRealTimeReport } from '../data/realtime-service';
-import { AgentLog } from '../types';
+import { AgentLog, InvestmentDecision } from '../types';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { ChatOpenAI } from '@langchain/openai';
 import {
@@ -25,22 +25,26 @@ function createLog(agent: AgentLog['agent'], message: string, status: AgentLog['
 function getLLM(state: ResearchState) {
   if (state.provider === 'gemini' && state.apiKey) {
     try {
+      const cleanKey = state.apiKey.trim();
       return new ChatGoogleGenerativeAI({
-        apiKey: state.apiKey,
+        apiKey: cleanKey,
         model: 'gemini-1.5-flash',
         temperature: 0.2,
       });
-    } catch {
+    } catch (e) {
+      console.error('Gemini init error:', e);
       return null;
     }
   } else if (state.provider === 'openai' && state.apiKey) {
     try {
+      const cleanKey = state.apiKey.trim();
       return new ChatOpenAI({
-        openAIApiKey: state.apiKey,
+        openAIApiKey: cleanKey,
         modelName: 'gpt-4o',
         temperature: 0.2,
       });
-    } catch {
+    } catch (e) {
+      console.error('OpenAI init error:', e);
       return null;
     }
   }
@@ -228,25 +232,109 @@ export async function cioNode(state: ResearchState): Promise<Partial<ResearchSta
     createLog('Chief Investment Officer', `Final institutional investment memo compiled from live stock exchange data.`, 'completed')
   ];
 
-  let finalReport = baseline;
+  const mSummary = state.marketData?.rawSummary || baseline.summary;
+  const cMoat = state.competitiveData?.moatAnalysis || `Dominant competitive moat within ${baseline.sector} supported by high customer retention and pricing power.`;
+  const sMacro = state.sentimentData?.macroAnalysis || `Institutional sentiment remains robust at ${baseline.sentimentScore}/100, driven by real-time market order flow and analyst consensus.`;
+  const vThesis = state.valuationData?.valuationThesis || `Current live share price of ${baseline.metrics.currency}${baseline.metrics.currentPrice} offers an attractive risk-adjusted entry point relative to our target of ${baseline.metrics.currency}${baseline.metrics.targetPrice}.`;
+
+  // Compute committee votes from real-time metrics
+  const votes = [
+    {
+      agent: 'Market Data Collector',
+      vote: baseline.metrics.revenueYoY > 10 ? ('INVEST' as const) : baseline.metrics.revenueYoY > 0 ? ('WATCH' as const) : ('PASS' as const),
+      confidence: Math.min(98, Math.max(65, 75 + Math.round(baseline.metrics.revenueYoY / 3))),
+      rationale: `Top-line revenue velocity is ${baseline.metrics.revenueYoY >= 0 ? '+' : ''}${baseline.metrics.revenueYoY}% YoY with EBITDA margins at ${baseline.metrics.ebitdaMargin}%.`
+    },
+    {
+      agent: 'Competitive Analyst',
+      vote: baseline.metrics.roe > 15 ? ('INVEST' as const) : baseline.metrics.roe > 8 ? ('WATCH' as const) : ('PASS' as const),
+      confidence: Math.min(96, Math.max(70, 72 + Math.round(baseline.metrics.roe / 2))),
+      rationale: `Return on Equity (ROE) stands at ${baseline.metrics.roe}%, supporting durable competitive moat sustainability.`
+    },
+    {
+      agent: 'Sentiment & Risk Engine',
+      vote: baseline.sentimentScore > 60 ? ('INVEST' as const) : baseline.sentimentScore > 40 ? ('WATCH' as const) : ('PASS' as const),
+      confidence: Math.min(95, Math.max(65, 68 + Math.round(baseline.sentimentScore / 4))),
+      rationale: `Institutional order flow index is ${baseline.sentimentScore}/100 with beta volatility at ${baseline.metrics.beta}.`
+    },
+    {
+      agent: 'Valuation Modeler',
+      vote: baseline.metrics.targetPrice > baseline.metrics.currentPrice * 1.1 ? ('INVEST' as const) : baseline.metrics.targetPrice > baseline.metrics.currentPrice * 0.95 ? ('WATCH' as const) : ('PASS' as const),
+      confidence: Math.min(97, Math.max(68, 70 + Math.round(((baseline.metrics.targetPrice - baseline.metrics.currentPrice) / baseline.metrics.currentPrice) * 50))),
+      rationale: `Implied DCF target price is ${baseline.metrics.currency}${baseline.metrics.targetPrice} vs current market price of ${baseline.metrics.currency}${baseline.metrics.currentPrice}.`
+    }
+  ];
+
+  let finalReport = {
+    ...baseline,
+    committeeIntelligence: {
+      marketDataSummary: mSummary,
+      moatAnalysis: cMoat,
+      macroAnalysis: sMacro,
+      valuationThesis: vThesis,
+      votes
+    }
+  };
 
   if (llm) {
     try {
-      const prompt = `${CIO_PROMPT}\n\nCompany: ${company} (${baseline.ticker})\nLive Price: ${baseline.metrics.currency}${baseline.metrics.currentPrice}\nHorizon: ${state.horizon}\nMarket Summary: ${state.marketData?.rawSummary || baseline.summary}\nMoat Summary: ${state.competitiveData?.moatAnalysis || 'Strong moat'}\nValuation: ${state.valuationData?.valuationThesis || 'Attractive valuation'}\n\nWrite a commanding 3-bullet executive investment thesis and confirm whether to INVEST, PASS, or WATCH based on live real-time metrics.`;
+      const prompt = `${CIO_PROMPT}\n\nCompany: ${company} (${baseline.ticker})\nLive Price: ${baseline.metrics.currency}${baseline.metrics.currentPrice}\nTarget Price: ${baseline.metrics.currency}${baseline.metrics.targetPrice}\nHorizon: ${state.horizon}\nMarket Summary: ${mSummary}\nMoat Summary: ${cMoat}\nValuation: ${vThesis}\n\nYou MUST return ONLY valid JSON without markdown formatting, code blocks, or backticks. Use exactly this JSON structure:\n{\n  "decision": "INVEST" | "PASS" | "WATCH",\n  "convictionScore": integer between 45 and 98,\n  "summary": "3 to 4 sentence executive institutional synthesis...",\n  "thesis": ["Core investment thesis point 1...", "Core investment thesis point 2...", "Core investment thesis point 3..."],\n  "keyCatalysts": ["Upcoming catalyst 1...", "Upcoming catalyst 2...", "Upcoming catalyst 3..."],\n  "keyRisks": ["Primary risk factor 1...", "Primary risk factor 2...", "Primary risk factor 3..."]\n}`;
       const res = await llm.invoke(prompt);
-      const text = typeof res.content === 'string' ? res.content : JSON.stringify(res.content);
-      
-      finalReport = {
-        ...baseline,
-        companyName: baseline.companyName,
-        ticker: baseline.ticker,
-        sector: baseline.sector,
-        horizon: state.horizon,
-        summary: text,
-        isLiveLLM: true
-      };
-    } catch {
-      // fallback to baseline
+      const rawText = typeof res.content === 'string' ? res.content : JSON.stringify(res.content);
+      const cleanJson = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+      let parsed: any = null;
+      try {
+        parsed = JSON.parse(cleanJson);
+      } catch {
+        // ignore parse fail
+      }
+
+      if (parsed && parsed.decision && parsed.summary) {
+        const dec: InvestmentDecision = (parsed.decision === 'INVEST' || parsed.decision === 'PASS' || parsed.decision === 'WATCH') ? parsed.decision : baseline.decision;
+        finalReport = {
+          ...baseline,
+          companyName: baseline.companyName,
+          ticker: baseline.ticker,
+          sector: baseline.sector,
+          horizon: state.horizon,
+          decision: dec,
+          convictionScore: Math.min(99, Math.max(40, Number(parsed.convictionScore) || baseline.convictionScore)),
+          summary: parsed.summary,
+          thesis: Array.isArray(parsed.thesis) && parsed.thesis.length > 0 ? parsed.thesis : baseline.thesis,
+          keyCatalysts: Array.isArray(parsed.keyCatalysts) && parsed.keyCatalysts.length > 0 ? parsed.keyCatalysts : baseline.keyCatalysts,
+          keyRisks: Array.isArray(parsed.keyRisks) && parsed.keyRisks.length > 0 ? parsed.keyRisks : baseline.keyRisks,
+          isLiveLLM: true,
+          committeeIntelligence: {
+            marketDataSummary: mSummary,
+            moatAnalysis: cMoat,
+            macroAnalysis: sMacro,
+            valuationThesis: vThesis,
+            votes
+          }
+        };
+        logs.push(createLog('Chief Investment Officer', `Live LLM Committee reached definitive verdict: ${dec} (Conviction: ${finalReport.convictionScore}%).`, 'completed'));
+      } else {
+        finalReport = {
+          ...baseline,
+          companyName: baseline.companyName,
+          ticker: baseline.ticker,
+          sector: baseline.sector,
+          horizon: state.horizon,
+          summary: rawText,
+          isLiveLLM: true,
+          committeeIntelligence: {
+            marketDataSummary: mSummary,
+            moatAnalysis: cMoat,
+            macroAnalysis: sMacro,
+            valuationThesis: vThesis,
+            votes
+          }
+        };
+        logs.push(createLog('Chief Investment Officer', `Live LLM research synthesis compiled.`, 'completed'));
+      }
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      logs.push(createLog('Chief Investment Officer', `Live LLM API Warning (${errMsg.slice(0, 40)}). Relying on real-time quant committee consensus.`, 'warning'));
     }
   }
 

@@ -380,7 +380,39 @@ export async function fetchRealTimeReport(query: string, horizon: InvestmentHori
     ],
     sentimentScore: Math.min(96, Math.max(42, Math.round(convictionScore * 0.95))),
     generatedAt: new Date().toISOString(),
-    isLiveLLM: true
+    isLiveLLM: true,
+    committeeIntelligence: {
+      marketDataSummary: `${companyName} exhibits top-line growth of +${revenueYoY}% YoY with EBITDA margin at ${ebitdaMargin}%.`,
+      moatAnalysis: `Dominant competitive moat within ${sector} supported by high customer retention and pricing power.`,
+      macroAnalysis: `Institutional sentiment index is calibrated at ${Math.min(96, Math.max(42, Math.round(convictionScore * 0.95)))}/100 based on live exchange data.`,
+      valuationThesis: `Current share price of ${currencySymbol}${currentPrice} offers an attractive risk-adjusted entry relative to our quantitative target of ${currencySymbol}${targetPrice}.`,
+      votes: [
+        {
+          agent: 'Market Data Collector',
+          vote: revenueYoY > 10 ? 'INVEST' : revenueYoY > 0 ? 'WATCH' : 'PASS',
+          confidence: Math.min(98, Math.max(65, 75 + Math.round(revenueYoY / 3))),
+          rationale: `Top-line revenue velocity is +${revenueYoY}% YoY with EBITDA margins at ${ebitdaMargin}%.`
+        },
+        {
+          agent: 'Competitive Analyst',
+          vote: roe > 15 ? 'INVEST' : roe > 8 ? 'WATCH' : 'PASS',
+          confidence: Math.min(96, Math.max(70, 72 + Math.round(roe / 2))),
+          rationale: `Return on Equity (ROE) stands at ${roe}%, supporting durable competitive moat sustainability.`
+        },
+        {
+          agent: 'Sentiment & Risk Engine',
+          vote: convictionScore > 60 ? 'INVEST' : convictionScore > 40 ? 'WATCH' : 'PASS',
+          confidence: Math.min(95, Math.max(65, 68 + Math.round(convictionScore / 4))),
+          rationale: `Institutional order flow index is ${Math.min(96, Math.max(42, Math.round(convictionScore * 0.95)))}/100 with beta volatility at ${beta}.`
+        },
+        {
+          agent: 'Valuation Modeler',
+          vote: targetPrice > currentPrice * 1.1 ? 'INVEST' : targetPrice > currentPrice * 0.95 ? 'WATCH' : 'PASS',
+          confidence: Math.min(97, Math.max(68, 70 + Math.round(((targetPrice - currentPrice) / currentPrice) * 50))),
+          rationale: `Implied DCF target price is ${currencySymbol}${targetPrice} vs current market price of ${currencySymbol}${currentPrice}.`
+        }
+      ]
+    }
   };
 }
 
