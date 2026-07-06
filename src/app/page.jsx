@@ -1,11 +1,9 @@
 import React from 'react';
 import { Navbar } from '../components/navbar';
 import { SearchSection } from '../components/search-section';
-import { ShieldCheck, Cpu, Award, TrendingUp, Sparkles, Terminal } from 'lucide-react';
-
+import { Cpu, Award, TrendingUp, Sparkles, Terminal } from 'lucide-react';
 export default function Home() {
-  return (
-    <div className="min-h-screen flex flex-col bg-[#08090d] text-slate-100 selection:bg-indigo-500/30">
+    return (<div className="min-h-screen flex flex-col bg-[#08090d] text-slate-100 selection:bg-indigo-500/30">
       <Navbar />
       
       <main className="flex-1">
@@ -29,7 +27,7 @@ export default function Home() {
             <div className="glass-panel p-6 rounded-3xl border border-white/10 space-y-4">
               <div className="flex items-center space-x-3 text-indigo-400">
                 <div className="p-2.5 rounded-xl bg-indigo-500/20 border border-indigo-500/30">
-                  <Cpu className="w-6 h-6" />
+                  <Cpu className="w-6 h-6"/>
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white">1. Multi-Agent State Graph</h3>
@@ -44,7 +42,7 @@ export default function Home() {
             <div className="glass-panel p-6 rounded-3xl border border-white/10 space-y-4">
               <div className="flex items-center space-x-3 text-emerald-400">
                 <div className="p-2.5 rounded-xl bg-emerald-500/20 border border-emerald-500/30">
-                  <TrendingUp className="w-6 h-6" />
+                  <TrendingUp className="w-6 h-6"/>
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white">2. Quantitative Valuation Models</h3>
@@ -59,7 +57,7 @@ export default function Home() {
             <div className="glass-panel p-6 rounded-3xl border border-white/10 space-y-4">
               <div className="flex items-center space-x-3 text-purple-400">
                 <div className="p-2.5 rounded-xl bg-purple-500/20 border border-purple-500/30">
-                  <Terminal className="w-6 h-6" />
+                  <Terminal className="w-6 h-6"/>
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white">3. Transparent Thinking Terminal</h3>
@@ -74,7 +72,7 @@ export default function Home() {
             <div className="glass-panel p-6 rounded-3xl border border-white/10 space-y-4">
               <div className="flex items-center space-x-3 text-amber-400">
                 <div className="p-2.5 rounded-xl bg-amber-500/20 border border-amber-500/30">
-                  <Award className="w-6 h-6" />
+                  <Award className="w-6 h-6"/>
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white">4. Zero-Latency Evaluation Mode</h3>
@@ -98,11 +96,10 @@ export default function Home() {
             <span>Institutional AI Investment Research Platform</span>
           </div>
           <p className="flex items-center space-x-1">
-            <Sparkles className="w-3.5 h-3.5 text-indigo-400 inline mr-1" />
+            <Sparkles className="w-3.5 h-3.5 text-indigo-400 inline mr-1"/>
             Built with Next.js 15, LangChain.js, LangGraph.js, and Recharts.
           </p>
         </div>
       </footer>
-    </div>
-  );
+    </div>);
 }

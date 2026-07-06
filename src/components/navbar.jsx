@@ -1,31 +1,28 @@
 'use client';
-
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { TrendingUp, Settings, Zap, Sparkles, ShieldCheck, Activity } from 'lucide-react';
+import { TrendingUp, Settings, Zap, Sparkles, ShieldCheck } from 'lucide-react';
 import { ApiKeyModal } from './api-key-modal';
-
 export function Navbar() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [provider, setProvider] = useState<'gemini' | 'openai' | 'demo'>('demo');
-  const [apiKey, setApiKey] = useState<string>('');
-
-  useEffect(() => {
-    const savedProvider = localStorage.getItem('apexiq_provider') as 'gemini' | 'openai' | 'demo';
-    const savedKey = localStorage.getItem('apexiq_api_key');
-    if (savedProvider) setProvider(savedProvider);
-    if (savedKey) setApiKey(savedKey);
-  }, []);
-
-  return (
-    <>
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [provider, setProvider] = useState('demo');
+    const [apiKey, setApiKey] = useState('');
+    useEffect(() => {
+        const savedProvider = localStorage.getItem('apexiq_provider');
+        const savedKey = localStorage.getItem('apexiq_api_key');
+        if (savedProvider)
+            setProvider(savedProvider);
+        if (savedKey)
+            setApiKey(savedKey);
+    }, []);
+    return (<>
       <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-black/60 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
             <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 p-0.5 shadow-lg shadow-indigo-500/25 transition-all group-hover:scale-105 group-hover:shadow-indigo-500/40">
               <div className="flex h-full w-full items-center justify-center rounded-[10px] bg-[#090A0F]">
-                <TrendingUp className="h-5 w-5 text-indigo-400 group-hover:text-indigo-300 transition-colors" />
+                <TrendingUp className="h-5 w-5 text-indigo-400 group-hover:text-indigo-300 transition-colors"/>
               </div>
             </div>
             <div className="flex flex-col">
@@ -60,40 +57,23 @@ export function Navbar() {
 
           {/* Settings & Execution Mode Badge */}
           <div className="flex items-center space-x-3">
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="flex items-center space-x-2 px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-300 transition-all hover:border-white/20"
-            >
-              {provider === 'demo' ? (
-                <span className="flex items-center space-x-1.5 text-emerald-400">
-                  <Zap className="w-3.5 h-3.5 fill-current animate-pulse" />
+            <button onClick={() => setIsModalOpen(true)} className="flex items-center space-x-2 px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-300 transition-all hover:border-white/20">
+              {provider === 'demo' ? (<span className="flex items-center space-x-1.5 text-emerald-400">
+                  <Zap className="w-3.5 h-3.5 fill-current animate-pulse"/>
                   <span className="hidden sm:inline">Instant Demo Mode</span>
-                </span>
-              ) : provider === 'gemini' ? (
-                <span className="flex items-center space-x-1.5 text-indigo-400">
-                  <Sparkles className="w-3.5 h-3.5 fill-current" />
+                </span>) : provider === 'gemini' ? (<span className="flex items-center space-x-1.5 text-indigo-400">
+                  <Sparkles className="w-3.5 h-3.5 fill-current"/>
                   <span className="hidden sm:inline">Gemini 1.5 Pro</span>
-                </span>
-              ) : (
-                <span className="flex items-center space-x-1.5 text-purple-400">
-                  <ShieldCheck className="w-3.5 h-3.5" />
+                </span>) : (<span className="flex items-center space-x-1.5 text-purple-400">
+                  <ShieldCheck className="w-3.5 h-3.5"/>
                   <span className="hidden sm:inline">OpenAI GPT-4o</span>
-                </span>
-              )}
-              <Settings className="w-4 h-4 text-slate-400 ml-1" />
+                </span>)}
+              <Settings className="w-4 h-4 text-slate-400 ml-1"/>
             </button>
           </div>
         </div>
       </header>
 
-      <ApiKeyModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        provider={provider}
-        setProvider={setProvider}
-        apiKey={apiKey}
-        setApiKey={setApiKey}
-      />
-    </>
-  );
+      <ApiKeyModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} provider={provider} setProvider={setProvider} apiKey={apiKey} setApiKey={setApiKey}/>
+    </>);
 }

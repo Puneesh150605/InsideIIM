@@ -1,20 +1,12 @@
 'use client';
-
 import React from 'react';
-import { Users, Award, TrendingUp, DollarSign } from 'lucide-react';
-import { ResearchReport } from '../lib/types';
-
-interface PeerMatrixProps {
-  report: ResearchReport;
-}
-
-export function PeerMatrix({ report }: PeerMatrixProps) {
-  return (
-    <div className="glass-panel rounded-3xl p-6 border border-white/10 space-y-4">
+import { Users } from 'lucide-react';
+export function PeerMatrix({ report }) {
+    return (<div className="glass-panel rounded-3xl p-6 border border-white/10 space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-4">
         <div>
           <h3 className="text-xl font-bold text-white flex items-center">
-            <Users className="w-5 h-5 mr-2 text-indigo-400" />
+            <Users className="w-5 h-5 mr-2 text-indigo-400"/>
             Competitive Peer Benchmarking
           </h3>
           <p className="text-xs text-slate-400">Relative valuation and efficiency metrics against top sector competitors</p>
@@ -52,8 +44,7 @@ export function PeerMatrix({ report }: PeerMatrixProps) {
             </tr>
 
             {/* Peers */}
-            {report.peers.map((peer, idx) => (
-              <tr key={idx} className="hover:bg-white/[0.02] text-slate-300 transition-colors">
+            {report.peers.map((peer, idx) => (<tr key={idx} className="hover:bg-white/[0.02] text-slate-300 transition-colors">
                 <td className="py-3 px-4 font-sans font-semibold text-white">
                   {peer.name} <span className="text-slate-400 font-mono">({peer.ticker})</span>
                 </td>
@@ -68,11 +59,9 @@ export function PeerMatrix({ report }: PeerMatrixProps) {
                 <td className={`py-3 px-4 ${peer.roe >= 0 ? 'text-slate-200' : 'text-rose-400'}`}>
                   {peer.roe}%
                 </td>
-              </tr>
-            ))}
+              </tr>))}
           </tbody>
         </table>
       </div>
-    </div>
-  );
+    </div>);
 }
