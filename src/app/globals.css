@@ -74,19 +74,19 @@ body {
 
 /* Glowing Effects */
 .glow-indigo {
-  box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 0 15px -3px rgba(99, 102, 241, 0.15);
 }
 
 .glow-emerald {
-  box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 0 15px -3px rgba(16, 185, 129, 0.15);
 }
 
 .glow-rose {
-  box-shadow: 0 0 25px -5px rgba(244, 63, 94, 0.4);
+  box-shadow: 0 0 15px -3px rgba(244, 63, 94, 0.15);
 }
 
 .glow-amber {
-  box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.4);
+  box-shadow: 0 0 15px -3px rgba(245, 158, 11, 0.15);
 }
 
 .text-gradient-primary {

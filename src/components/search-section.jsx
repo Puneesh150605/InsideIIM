@@ -193,7 +193,7 @@ export function SearchSection() {
               {['6-12m', '1-3y', '5y+'].map((h) => (<button key={h} type="button" onClick={() => setHorizon(h)} className={`px-3 py-1 rounded-lg font-bold transition-all ${horizon === h
                 ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 shadow-sm'
                 : 'bg-white/5 text-slate-400 hover:text-white hover:bg-white/10'}`}>
-                  {h === '6-12m' ? '⚡ Short (6-12m)' : h === '1-3y' ? '📈 Growth (1-3y)' : '🏛️ Long (5y+)'}
+                  {h === '6-12m' ? 'Short (6-12m)' : h === '1-3y' ? 'Growth (1-3y)' : 'Long (5y+)'}
                 </button>))}
             </div>
           </div>

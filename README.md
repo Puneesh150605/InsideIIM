@@ -1,4 +1,4 @@
-# 🏛️ ApexIQ: Institutional AI Investment Research Agent
+# ApexIQ: Institutional AI Investment Research Agent
 
 An autonomous, real-time multi-agent AI investment analyst built with **Next.js 16 (App Router, Pure JavaScript `.jsx`/`.js`)**, **LangChain.js / `@langchain/langgraph`**, and **Yahoo Finance Real-Time Market Data (`yahoo-finance2`)**.
 
@@ -6,7 +6,7 @@ ApexIQ takes any company name or stock ticker, orchestrates an institutional 5-a
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 1. [Overview — What It Does](#1-overview--what-it-does)
 2. [How to Run It — Setup & Environment](#2-how-to-run-it--setup--environment)
 3. [How It Works — Approach & Architecture](#3-how-it-works--approach--architecture)
@@ -21,7 +21,7 @@ ApexIQ takes any company name or stock ticker, orchestrates an institutional 5-a
 
 ApexIQ is designed to replace superficial single-prompt AI wrappers with an **institutional-grade quantitative and qualitative investment committee**.
 
-### ✨ Core Capabilities:
+### Core Capabilities:
 - **Live 10-Factor Quantitative Valuation Engine**: Fetches real-time market quotes via `yahoo-finance2` (price, P/E ratio, ROE, debt-to-equity, free cash flow yield, revenue YoY growth, EBITDA margins, beta, and 52-week range) and computes a dynamic **Implied DCF Target Price** and **Alpha Conviction Score (0–100%)** on the fly.
 - **5-Agent LangGraph Committee Room**: Orchestrates a Directed Acyclic Graph (DAG) where 5 specialist personas collaborate:
   1. **Market Data Collector**: Evaluates top-line growth and margin expansion.
@@ -30,7 +30,7 @@ ApexIQ is designed to replace superficial single-prompt AI wrappers with an **in
   4. **Valuation Modeler**: Evaluates WACC sensitivity and implied margin of safety.
   5. **Chief Investment Officer (CIO)**: Synthesizes specialist votes into the master verdict (**`INVEST`**, **`WATCH`**, or **`PASS`**).
 - **Interactive Macro Stress Test Simulator**: Allows users to test macroeconomic shocks in real time (**+200 bps WACC Rate Shock**, **+15% Revenue Inflection Boom**, or **-25% Severe Recession Slump**) and watch the target price and verdict recompute instantly.
-- **AI Voice Synthesis Executive Briefing (Listen 🎙️)**: Uses HTML5 Web Speech API to broadcast an audio reading of the investment memo.
+- **AI Voice Synthesis Executive Briefing (Listen Audio)**: Uses HTML5 Web Speech API to broadcast an audio reading of the investment memo.
 - **Grill the AI Analyst Chat (`/api/chat`)**: Slide-over interactive drawer where users can interrogate the AI on its assumptions and financial models.
 - **Exportable Markdown Memos**: Generates downloadable institutional investment memos (`ApexIQ_Memo_[TICKER].md`).
 
@@ -87,11 +87,11 @@ graph TD
     
     subgraph LangGraph ["LangGraph.js Directed Acyclic Graph (agents.js)"]
         State["StateGraph: ResearchStateAnnotation"]
-        Node1["📊 Market Data Collector"] --> Node2["🏰 Competitive Moat Analyst"]
-        Node1 --> Node3["⚖️ Sentiment & Risk Engine"]
-        Node2 --> Node4["📐 Valuation Modeler"]
+        Node1["Market Data Collector"] --> Node2["Competitive Moat Analyst"]
+        Node1 --> Node3["Sentiment & Risk Engine"]
+        Node2 --> Node4["Valuation Modeler"]
         Node3 --> Node4
-        Node4 --> Node5["🏛️ Chief Investment Officer (CIO)"]
+        Node4 --> Node5["Chief Investment Officer (CIO)"]
     end
     
     API --> QuantEngine

@@ -1,4 +1,4 @@
-# 🤖 ApexIQ — AI Pair-Programming & LLM Development Transcript
+# ApexIQ — AI Pair-Programming & LLM Development Transcript
 
 This document summarizes the architectural decisions, thought processes, and collaborative prompts executed during the development of **ApexIQ** alongside our AI coding assistant.
 
@@ -42,5 +42,5 @@ This document summarizes the architectural decisions, thought processes, and col
   - Built two new interactive UI components:
     - `AiCommitteeRoom.jsx`: Visualizes the specialist voting ledger.
     - `StressTestSimulator.jsx`: Lets users test macroeconomic shocks (+200 bps WACC hike, +15% revenue boom, -25% recession slump) in real time.
-    - Added HTML5 Web Speech API voice synthesis (`Listen 🎙️` button) on the hero banner.
+    - Added HTML5 Web Speech API voice synthesis (`Listen Audio` button) on the hero banner.
 - **Outcome**: Verified zero compilation errors (`npm run build` in 19.1s) and pushed cleanly to GitHub (`main` and `master`).

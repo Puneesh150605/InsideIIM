@@ -3,11 +3,11 @@ import React, { useEffect, useRef } from 'react';
 import { Terminal, Cpu, CheckCircle2, Loader2, AlertTriangle, ArrowRight, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 const AGENT_NODES = [
-    { id: 'Market Data Collector', label: 'Fundamentals & Market Data', role: 'Equities Analyst', icon: '📊' },
-    { id: 'Competitive Analyst', label: 'Competitive & Moat Strategy', role: 'Industry Strategist', icon: '🏰' },
-    { id: 'Sentiment & Risk Engine', label: 'Sentiment & Tail Risk Engine', role: 'Hedge Fund Quant', icon: '⚖️' },
-    { id: 'Valuation Modeler', label: 'DCF & Multiples Valuation', role: 'Valuation Head', icon: '📐' },
-    { id: 'Chief Investment Officer', label: 'CIO Committee Synthesis', role: 'Investment Chair', icon: '🏛️' },
+    { id: 'Market Data Collector', label: 'Fundamentals & Market Data', role: 'Equities Analyst', badge: 'MKT' },
+    { id: 'Competitive Analyst', label: 'Competitive & Moat Strategy', role: 'Industry Strategist', badge: 'CMP' },
+    { id: 'Sentiment & Risk Engine', label: 'Sentiment & Tail Risk Engine', role: 'Hedge Fund Quant', badge: 'RSK' },
+    { id: 'Valuation Modeler', label: 'DCF & Multiples Valuation', role: 'Valuation Head', badge: 'VAL' },
+    { id: 'Chief Investment Officer', label: 'CIO Committee Synthesis', role: 'Investment Chair', badge: 'CIO' },
 ];
 export function LiveAgentVisualizer({ logs, company, isComplete }) {
     const terminalRef = useRef(null);
@@ -80,7 +80,7 @@ export function LiveAgentVisualizer({ logs, company, isComplete }) {
                 {status === 'pending' && <span className="w-2 h-2 rounded-full bg-white/20"></span>}
               </div>
 
-              <div className="text-2xl mb-1">{node.icon}</div>
+              <div className="inline-block px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-white/10 text-slate-300 mb-2">{node.badge}</div>
               <h4 className="text-xs font-bold text-white leading-snug">{node.label}</h4>
               <span className="text-[10px] text-slate-400 font-medium block mt-0.5">{node.role}</span>
 
