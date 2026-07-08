@@ -1,4 +1,9 @@
 # ApexIQ: Institutional AI Investment Research Agent
+Deployment link: https://insideiim-production.up.railway.app
+GitHub: https://github.com/Puneesh150605/ApexIQ
+
+
+
 
 An autonomous, real-time multi-agent AI investment analyst built with **Next.js 16 (App Router, Pure JavaScript `.jsx`/`.js`)**, **LangChain.js / `@langchain/langgraph`**, and **Yahoo Finance Real-Time Market Data (`yahoo-finance2`)**.
 
